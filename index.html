@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Gauss-Jordan Quest</title>
+<title>Método de Gauss-Jordan </title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{color-scheme:dark;--bg:#0b0620;--p:#ff2e93;--c:#00f0ff;--y:#ffe14d;--g:#39ff88;--card:#150c3a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -48,15 +48,15 @@ table.m td.done{border-color:var(--g)}
 <h1>GAUSS-JORDAN QUEST</h1>
 <div class="sub">ÁLGEBRA LINEAL · SISTEMAS m × n</div>
 
-<div class="card"><div class="lb">▶ NIVEL 1 · CONFIGURA TU SISTEMA</div>
+<div class="card"><div class="lb"> NIVEL 1 · CONFIGURA TU SISTEMA</div>
 <div class="row"><label>Ecuaciones (m)</label><button class="s" id="m-">−</button><input id="m" type="number" min="1" max="10" value="3"><button class="s" id="m+">+</button>
 <label>Incógnitas (n)</label><button class="s" id="n-">−</button><input id="n" type="number" min="1" max="10" value="3"><button class="s" id="n+">+</button>
-<button class="g" id="ex">⚡ EJEMPLO</button></div>
+<button class="g" id="ex"> EJEMPLO</button></div>
 <div class="tip" style="margin-top:8px">Acepta enteros, decimales y fracciones como 3/4. Cada fila es una ecuación; la última columna son los términos independientes.</div>
 <div class="gr" id="grid"></div>
-<div class="row" style="justify-content:center"><button class="hot" id="go">🚀 RESOLVER</button></div></div>
+<div class="row" style="justify-content:center"><button class="hot" id="go">RESOLVER</button></div></div>
 
-<div class="card hide" id="play"><div class="lb">▶ NIVEL 2 · LA BATALLA PASO A PASO</div>
+<div class="card hide" id="play"><div class="lb"> NIVEL 2 · LA BATALLA PASO A PASO</div>
 <div class="hud"><span id="st">PASO 0</span><span id="xp">XP 0</span></div>
 <div class="bar"><i id="pb"></i></div>
 <div class="gr" id="mat"></div>
@@ -104,9 +104,9 @@ pc.push(c);r++}
 const bad=M.some(row=>row.slice(0,n).every(z)&&!z(row[n]));
 push('FIN DEL COMBATE',bad?'La matriz ya está reducida. Hay una fila con ceros = un número distinto de 0, lo cual es imposible.':'La matriz ya está en forma escalonada reducida (Gauss-Jordan). Ahora leemos la solución directamente.');
 const free=[...Array(n).keys()].filter(j=>!pc.includes(j));let h;
-if(bad)h='<div class="lb">⚠ RESULTADO</div><h2>SISTEMA INCONSISTENTE</h2><div>Aparece una fila 0 = b (con b ≠ 0), así que <b>no existe solución</b>.</div>';
-else if(!free.length)h='<div class="lb">🏆 NIVEL COMPLETADO</div><h2>¡SOLUCIÓN ÚNICA!</h2>'+pc.map((c,k)=>`<div class="sol"><span>x${c+1}</span> = ${S(M[k][n])}</div>`).join('')+'<div class="tip">Rango = n = '+n+': cada incógnita quedó con un valor exacto.</div>';
-else h='<div class="lb">🌌 NIVEL COMPLETADO</div><h2>INFINITAS SOLUCIONES</h2>'+pc.map((c,k)=>`<div class="sol"><span>x${c+1}</span> = ${lin(M[k][n],free.map(j=>[F(-M[k][j].n,M[k][j].d),j]))}</div>`).join('')+free.map(j=>`<div class="sol"><span>x${j+1}</span> = libre</div>`).join('')+`<div class="tip">Rango ${pc.length} &lt; n = ${n}: hay ${free.length} variable(s) libre(s); cada valor que elijas para ellas da una solución distinta.</div>`;
+if(bad)h='<div class="lb"> RESULTADO</div><h2>SISTEMA INCONSISTENTE</h2><div>Aparece una fila 0 = b (con b ≠ 0), así que <b>no existe solución</b>.</div>';
+else if(!free.length)h='<div class="lb"> ¡NIVEL COMPLETADO! </div><h2>¡SOLUCIÓN ÚNICA!</h2>'+pc.map((c,k)=>`<div class="sol"><span>x${c+1}</span> = ${S(M[k][n])}</div>`).join('')+'<div class="tip">Rango = n = '+n+': cada incógnita quedó con un valor exacto.</div>';
+else h='<div class="lb"> ¡NIVEL COMPLETADO! </div><h2>INFINITAS SOLUCIONES</h2>'+pc.map((c,k)=>`<div class="sol"><span>x${c+1}</span> = ${lin(M[k][n],free.map(j=>[F(-M[k][j].n,M[k][j].d),j]))}</div>`).join('')+free.map(j=>`<div class="sol"><span>x${j+1}</span> = libre</div>`).join('')+`<div class="tip">Rango ${pc.length} &lt; n = ${n}: hay ${free.length} variable(s) libre(s); cada valor que elijas para ellas da una solución distinta.</div>`;
 steps.final={h,bad};steps.pc=pc;cur=0;$('play').classList.remove('hide');$('res').classList.add('hide');show();$('play').scrollIntoView({behavior:'smooth'});return 1}
 function show(){const s=steps[cur],n=s.M[0].length-1,L=steps.length-1;
 let h='<table class="m"><tr>';for(let j=0;j<n;j++)h+=`<th>x${j+1}</th>`;h+='<th>b</th></tr>';

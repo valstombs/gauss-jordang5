@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gauss-Jordan Quest</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0b0620;--p:#ff2e93;--c:#00f0ff;--y:#ffe14d;--g:#39ff88;--card:#150c3a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 20% 0%,#3a0f6e 0,transparent 45%),radial-gradient(circle at 90% 100%,#7a0b4f 0,transparent 40%),var(--bg);color:#f3eaff;font-family:Rajdhani,system-ui,sans-serif;font-size:18px;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;background:linear-gradient(transparent 95%,#00f0ff14 95%),linear-gradient(90deg,transparent 95%,#00f0ff14 95%);background-size:38px 38px;pointer-events:none}
+.w{max-width:980px;margin:0 auto;padding:18px;position:relative}
+h1{font-family:Orbitron,sans-serif;font-weight:800;font-size:clamp(26px,6vw,46px);margin:6px 0;text-align:center;background:linear-gradient(90deg,var(--c),var(--p),var(--y));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 12px #ff2e9366)}
+.sub{text-align:center;color:#b9a8ff;margin-bottom:16px;letter-spacing:2px;font-weight:700}
+.card{background:var(--card);border:2px solid #4b2fb0;border-radius:18px;padding:16px;margin:14px 0;box-shadow:0 0 0 1px #00f0ff22,0 10px 40px #0008,inset 0 0 30px #7b3bff22}
+.lb{font-family:Orbitron,sans-serif;font-size:13px;color:var(--c);letter-spacing:2px;margin-bottom:10px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+label{font-weight:700;color:var(--y)}
+input{background:#0b0620;border:2px solid #5a3fd0;color:#fff;border-radius:10px;font:700 18px Rajdhani,sans-serif;padding:8px;text-align:center;width:64px;outline:none;transition:.2s}
+input:focus{border-color:var(--c);box-shadow:0 0 14px var(--c)}
+button{font:800 15px Orbitron,sans-serif;letter-spacing:1px;border:0;border-radius:12px;padding:12px 18px;cursor:pointer;color:#10052a;background:linear-gradient(135deg,var(--c),#5b8cff);box-shadow:0 5px 0 #0a5a8a,0 0 18px #00f0ff55;transition:.1s}
+button:active{transform:translateY(4px);box-shadow:0 1px 0 #0a5a8a}
+button.hot{background:linear-gradient(135deg,var(--p),var(--y));box-shadow:0 5px 0 #8a1550,0 0 22px #ff2e9377;font-size:17px}
+button.g{background:linear-gradient(135deg,var(--g),var(--c));box-shadow:0 5px 0 #0a7a4a}
+button:disabled{opacity:.35;cursor:not-allowed}
+.gr{overflow-x:auto;padding:6px 0}
+table.m{border-collapse:separate;border-spacing:6px;margin:0 auto}
+table.m th{font-family:Orbitron,sans-serif;font-size:12px;color:#9d8cff;font-weight:600}
+table.m td{min-width:62px;height:50px;text-align:center;font:700 20px Rajdhani,sans-serif;background:#0b0620;border:2px solid #3d2a95;border-radius:10px;transition:.3s}
+table.m td.sep{border-left:3px dashed var(--p)}
+table.m td.row{background:#2a1670;border-color:var(--c);box-shadow:0 0 12px #00f0ff66}
+table.m td.pv{background:linear-gradient(135deg,var(--p),var(--y));color:#10052a;border-color:#fff;box-shadow:0 0 22px var(--y)}
+table.m td.done{border-color:var(--g)}
+@keyframes fl{0%{transform:scale(1)}40%{transform:scale(1.25);background:var(--g);color:#10052a;box-shadow:0 0 24px var(--g)}100%{transform:scale(1)}}table.m td.ch{animation:fl .7s both}
+.bar{height:16px;background:#0b0620;border:2px solid #4b2fb0;border-radius:20px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--c),var(--p));box-shadow:0 0 14px var(--c);transition:width .4s}
+.hud{display:flex;justify-content:space-between;font-family:Orbitron,sans-serif;font-size:13px;margin-bottom:8px;color:var(--y)}
+.ex{background:#0b0620;border-left:5px solid var(--p);border-radius:10px;padding:12px 14px;margin:12px 0;animation:in .4s}
+.ex b{color:var(--y);font-family:Orbitron,sans-serif;font-size:15px;display:block;margin-bottom:4px}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.res{text-align:center;border-color:var(--g);box-shadow:0 0 40px #39ff8855}
+.res h2{font-family:Orbitron,sans-serif;color:var(--g);margin:4px 0;text-shadow:0 0 14px var(--g)}
+.sol{font:700 26px Orbitron,sans-serif;margin:6px 0;color:#fff}
+.sol span{color:var(--c)}
+.err{border-color:var(--p);box-shadow:0 0 40px #ff2e9355}.err h2{color:var(--p);text-shadow:0 0 14px var(--p)}
+.hide{display:none}button.s{padding:8px 14px;font-size:18px}button.off{opacity:.45;box-shadow:none}
+.tip{color:#9d8cff;font-size:15px}
+</style></head><body><div class="w">
+<h1>GAUSS-JORDAN QUEST</h1>
+<div class="sub">ÁLGEBRA LINEAL · SISTEMAS m × n</div>
+
+<div class="card"><div class="lb">▶ NIVEL 1 · CONFIGURA TU SISTEMA</div>
+<div class="row"><label>Ecuaciones (m)</label><button class="s" id="m-">−</button><input id="m" type="number" min="1" max="10" value="3"><button class="s" id="m+">+</button>
+<label>Incógnitas (n)</label><button class="s" id="n-">−</button><input id="n" type="number" min="1" max="10" value="3"><button class="s" id="n+">+</button>
+<button class="g" id="ex">⚡ EJEMPLO</button></div>
+<div class="tip" style="margin-top:8px">Acepta enteros, decimales y fracciones como 3/4. Cada fila es una ecuación; la última columna son los términos independientes.</div>
+<div class="gr" id="grid"></div>
+<div class="row" style="justify-content:center"><button class="hot" id="go">🚀 RESOLVER</button></div></div>
+
+<div class="card hide" id="play"><div class="lb">▶ NIVEL 2 · LA BATALLA PASO A PASO</div>
+<div class="hud"><span id="st">PASO 0</span><span id="xp">XP 0</span></div>
+<div class="bar"><i id="pb"></i></div>
+<div class="gr" id="mat"></div>
+
+<div class="row" style="justify-content:center">
+<button id="pv">◀ ANTERIOR</button><button id="au" class="g">▶ AUTO</button><button id="nx" class="hot">SIGUIENTE ▶</button><button id="sk">⏭ RESULTADO</button></div></div>
+
+<div class="card res hide" id="res"></div>
+</div>
+<script>
+const G=(a,b)=>b?G(b,a%b):Math.abs(a);
+const F=(n,d=1)=>{if(d<0){n=-n;d=-d}const g=G(n,d)||1;return{n:n/g,d:d/g}};
+const add=(a,b)=>F(a.n*b.d+b.n*a.d,a.d*b.d),sub=(a,b)=>F(a.n*b.d-b.n*a.d,a.d*b.d),mul=(a,b)=>F(a.n*b.n,a.d*b.d),dv=(a,b)=>F(a.n*b.d,a.d*b.n);
+const z=a=>a.n===0,S=a=>a.d===1?''+a.n:a.n+'/'+a.d;
+function P(s){s=(s||'').trim().replace(',','.');if(!s)return F(0);
+if(s.includes('/')){const[a,b]=s.split('/').map(Number);return(isNaN(a)||isNaN(b)||!b)?null:F(a,b)}
+const v=Number(s);if(isNaN(v))return null;const k=(s.split('.')[1]||'').length,m=10**k;return F(Math.round(v*m),m)}
+const $=i=>document.getElementById(i);
+let steps=[],cur=0,timer=null,mode='c';
+function build(keep){const m=+$('m').value,n=+$('n').value;
+const old=[...document.querySelectorAll('#grid input')].reduce((o,e)=>(o[e.dataset.k]=e.value,o),{});
+let h='<table class="m"><tr>';for(let j=0;j<n;j++)h+=`<th>x${j+1}</th>`;h+='<th>= b</th></tr>';
+for(let i=0;i<m;i++){h+='<tr>';for(let j=0;j<=n;j++){const k=i+'_'+j;h+=`<td class="${j==n?'sep':''}" style="border:0;background:none"><input data-k="${k}" value="${old[k]??''}" placeholder="0"></td>`}h+='</tr>'}
+$('grid').innerHTML=h+'</table>'}
+['m','n'].forEach(i=>{const f=d=>{$(i).value=Math.min(10,Math.max(1,(+$(i).value||1)+d));build()};$(i).onchange=()=>f(0);$(i+'+').onclick=()=>f(1);$(i+'-').onclick=()=>f(-1)});
+$('ex').onclick=()=>{$('m').value=3;$('n').value=3;build();const d=[[2,1,-1,8],[-3,-1,2,-11],[-2,1,2,-3]];
+document.querySelectorAll('#grid input').forEach(e=>{const[i,j]=e.dataset.k.split('_');e.value=d[i][j]})};
+function lin(c0,t){let s='';const p=[];if(!z(c0)||!t.length)p.push(S(c0));
+t.forEach(([k,j])=>{if(z(k))return;const neg=k.n<0,a=F(Math.abs(k.n),k.d),txt=(a.n==1&&a.d==1?'':S(a))+'x'+(j+1);
+p.push((p.length?(neg?' − ':' + '):(neg?'−':''))+txt)});return p.join('')||'0'}
+function solve(){const m=+$('m').value,n=+$('n').value;let M=[];
+for(let i=0;i<m;i++){M.push([]);for(let j=0;j<=n;j++){const v=P(document.querySelector(`[data-k="${i}_${j}"]`).value);if(!v){alert('Revisa la casilla fila '+(i+1)+', columna '+(j+1)+': valor no válido');return}M[i].push(v)}}
+steps=[];const snap=()=>M.map(r=>r.slice()),push=(t,x,pv,rw)=>steps.push({t,x,M:snap(),pv,rw:rw||[]});
+push('INICIO','Armamos la <b style="display:inline;font-size:inherit">matriz aumentada</b> [A | b]: cada fila es una ecuación y la línea punteada separa los coeficientes de los términos independientes. Meta: llegar a la forma escalonada reducida (unos en la diagonal y ceros alrededor).');
+let r=0,pc=[];
+for(let c=0;c<n&&r<m;c++){let p=-1;for(let i=r;i<m;i++)if(!z(M[i][c])){p=i;break}
+if(p<0){push(`COLUMNA ${c+1} SIN PIVOTE`,`No hay ningún valor distinto de cero desde la fila ${r+1} hacia abajo en la columna ${c+1}, así que no hay pivote. Esto hará que <b style="display:inline;font-size:inherit">x${c+1} sea variable libre</b>.`);continue}
+if(p!==r){[M[r],M[p]]=[M[p],M[r]];push('INTERCAMBIO DE FILAS',`El elemento en la fila ${r+1} es 0, así que intercambiamos F${r+1} ↔ F${p+1} para tener un pivote en la columna ${c+1}.`,[r,c],[r,p])}
+const pv=M[r][c];
+if(!(pv.n==1&&pv.d==1)){M[r]=M[r].map(v=>dv(v,pv));push('NORMALIZAR PIVOTE',`Convertimos el pivote en 1: F${r+1} → F${r+1} ÷ (${S(pv)}). Todos los elementos de la fila se dividen entre ${S(pv)}.`,[r,c],[r])}
+else push('PIVOTE LISTO',`El elemento (${r+1},${c+1}) ya vale 1, así que es nuestro pivote. Ahora hacemos ceros en el resto de la columna ${c+1}.`,[r,c],[r]);
+for(let i=0;i<m;i++){if(i===r||z(M[i][c]))continue;const f=M[i][c];M[i]=M[i].map((v,j)=>sub(v,mul(f,M[r][j])));
+push('HACER CERO',`Eliminamos el ${S(f)} de la fila ${i+1}: F${i+1} → F${i+1} ${f.n<0?'+':'−'} (${S(F(Math.abs(f.n),f.d))})·F${r+1}. Así el elemento (${i+1},${c+1}) queda en 0.`,[r,c],[i,r])}
+pc.push(c);r++}
+const bad=M.some(row=>row.slice(0,n).every(z)&&!z(row[n]));
+push('FIN DEL COMBATE',bad?'La matriz ya está reducida. Hay una fila con ceros = un número distinto de 0, lo cual es imposible.':'La matriz ya está en forma escalonada reducida (Gauss-Jordan). Ahora leemos la solución directamente.');
+const free=[...Array(n).keys()].filter(j=>!pc.includes(j));let h;
+if(bad)h='<div class="lb">⚠ RESULTADO</div><h2>SISTEMA INCONSISTENTE</h2><div>Aparece una fila 0 = b (con b ≠ 0), así que <b>no existe solución</b>.</div>';
+else if(!free.length)h='<div class="lb">🏆 NIVEL COMPLETADO</div><h2>¡SOLUCIÓN ÚNICA!</h2>'+pc.map((c,k)=>`<div class="sol"><span>x${c+1}</span> = ${S(M[k][n])}</div>`).join('')+'<div class="tip">Rango = n = '+n+': cada incógnita quedó con un valor exacto.</div>';
+else h='<div class="lb">🌌 NIVEL COMPLETADO</div><h2>INFINITAS SOLUCIONES</h2>'+pc.map((c,k)=>`<div class="sol"><span>x${c+1}</span> = ${lin(M[k][n],free.map(j=>[F(-M[k][j].n,M[k][j].d),j]))}</div>`).join('')+free.map(j=>`<div class="sol"><span>x${j+1}</span> = libre</div>`).join('')+`<div class="tip">Rango ${pc.length} &lt; n = ${n}: hay ${free.length} variable(s) libre(s); cada valor que elijas para ellas da una solución distinta.</div>`;
+steps.final={h,bad};steps.pc=pc;cur=0;$('play').classList.remove('hide');$('res').classList.add('hide');show();$('play').scrollIntoView({behavior:'smooth'});return 1}
+function show(){const s=steps[cur],n=s.M[0].length-1,L=steps.length-1;
+let h='<table class="m"><tr>';for(let j=0;j<n;j++)h+=`<th>x${j+1}</th>`;h+='<th>b</th></tr>';
+const pm=cur?steps[cur-1].M:null;let k=0;s.M.forEach((row,i)=>{h+='<tr>';row.forEach((v,j)=>{let c=[],st='';if(j==n)c.push('sep');if(mode=='e'&&s.rw.includes(i))c.push('row');if(mode=='e'&&s.pv&&s.pv[0]==i&&s.pv[1]==j)c.push('pv');if(pm&&S(pm[i][j])!=S(v)){c.push('ch');st=` style="animation-delay:${mode=='c'?Math.min(k++*50,900):0}ms"`}h+=`<td class="${c.join(' ')}"${st}>${S(v)}</td>`});h+='</tr>'});
+$('mat').innerHTML=h+'</table>';
+
+$('st').textContent=`PASO ${cur} / ${L}`;$('xp').textContent='XP '+cur*100;$('pb').style.width=(cur/L*100)+'%';
+$('pv').disabled=cur==0;$('nx').disabled=cur==L;
+const fin=cur==L;$('res').classList.toggle('hide',!fin);
+if(fin){$('res').innerHTML=steps.final.h+'<div class="lb" style="margin-top:16px">MATRIZ RESUELTA (GAUSS-JORDAN)</div><div class="gr">'+h+'</table></div>';$('res').classList.toggle('err',steps.final.bad);stop()}}
+function stop(){clearInterval(timer);timer=null;$('au').textContent='▶ AUTO'}
+$('nx').onclick=()=>{if(cur<steps.length-1){cur++;show()}};
+$('pv').onclick=()=>{if(cur>0){cur--;show()}};
+$('au').onclick=()=>{if(timer)return stop();if(cur==steps.length-1)cur=0;show();$('au').textContent='⏸ PAUSA';timer=setInterval(()=>{if(cur<steps.length-1){cur++;show()}else stop()},mode=='c'?1400:2200)};
+$('go').onclick=()=>{stop();if(solve()&&mode=='c')setTimeout(()=>$('au').click(),600)};
+$('sk').onclick=()=>{stop();if(steps.length){cur=steps.length-1;show()}};
+build();
+</script></body></html>
